@@ -1,13 +1,19 @@
-# ass
+# Ass
 (Yet) Another Static Site (Generator)
 
 > When you assume, you make an ass out of me and you.
 
--- Shakespeare
+-- Sir Isaac Newton (I think)
 
-# goals
+# Goals
 
 * Ass assumes as little as possible about your site.
-  * You place your files in the `site` directory how you want them. Don't worry, you can still define a `post` directory.
+  * You place your files in the `content` directory how you want them.
+  * Don't worry, you can still define a `posts` directory and make posts like `ass new post trip-to-cuba`.
 * Simplicity
 * Etc.
+
+# Command Examples
+
+* `ass new site workspace/my_blog`
+* `ass new post why-you-should-use-kotlin`
