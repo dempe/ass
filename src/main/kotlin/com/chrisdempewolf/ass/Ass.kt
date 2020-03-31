@@ -18,7 +18,7 @@ class Ass {
             return
         }
 
-        val command = args[0].toLowerCase()
+        val command = args[1].toLowerCase()
 
         if (!commands.containsKey(command)) {
             println("Unknown command [$command]. Valid commands are: ${commands.keys}")
