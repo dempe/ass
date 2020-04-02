@@ -1,6 +1,9 @@
-package main.kotlin.com.chrisdempewolf.ass
+package com.chrisdempewolf.ass
 
-import main.kotlin.com.chrisdempewolf.ass.commands.New
+import com.chrisdempewolf.ass.commands.Build
+import com.chrisdempewolf.ass.commands.Clean
+import com.chrisdempewolf.ass.commands.New
+import com.chrisdempewolf.ass.commands.Server
 
 fun main(args: Array<String>) {
     Ass().run(args)
@@ -9,8 +12,10 @@ fun main(args: Array<String>) {
 class Ass {
 
     private val commands = mapOf(
-        Pair("new", New())
-    )
+            Pair("build", Build()),
+            Pair("clean", Clean()),
+            Pair("new", New()),
+            Pair("server", Server()))
 
     fun run(args: Array<String>) {
         if (args.isEmpty()) {
