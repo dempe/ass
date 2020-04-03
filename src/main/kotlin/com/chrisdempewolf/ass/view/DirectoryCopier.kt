@@ -5,16 +5,16 @@ import java.io.File
 
 class DirectoryCopier {
 
-    fun copy(name: String = "") {
-        println("└ Preparing to copy directory [${name}]")
-        val directoryFile = File(name)
+    fun copy(dirToCopy: String = "", destination: String = "") {
+        println("└ Preparing to copy directory [${dirToCopy}]")
+        val directoryFile = File(dirToCopy)
         if (!directoryFile.exists()) {
             println("    └ Skipping, directory not found.")
             return
         }
-        println("    └ Copying directory [${name}] as-is")
+        println("    └ Copying directory [${dirToCopy}] as-is")
         FileUtils.copyDirectory(
                 directoryFile,
-                File("site/", name))
+                File(destination + "site/", dirToCopy))
     }
 }

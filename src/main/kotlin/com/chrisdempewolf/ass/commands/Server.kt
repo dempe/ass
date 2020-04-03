@@ -10,7 +10,6 @@ class Server : Command {
     override fun run(args: Array<String>) {
         Build().run(args)
         println("Starting server on http://localhost:8080")
-
         System.setProperty("org.eclipse.jetty.LEVEL", "INFO")
 
         val server = Server()
@@ -19,8 +18,9 @@ class Server : Command {
         server.addConnector(connector)
 
         val resourceHandler = ResourceHandler()
+        val dir = if (args.size >= 3) args[2] else ""
         resourceHandler.isDirectoriesListed = true
-        resourceHandler.resourceBase =  "site/"
+        resourceHandler.resourceBase =  dir + "site/"
         resourceHandler.cacheControl = "no-cache"
 
         val handlerList = HandlerList()
