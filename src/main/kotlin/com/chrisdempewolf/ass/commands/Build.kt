@@ -1,41 +1,70 @@
 package com.chrisdempewolf.ass.commands
 
-import com.chrisdempewolf.ass.view.DirectoryCopier
-import com.chrisdempewolf.ass.view.posts.ContentLoader
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
+
+/** FutureFile simply stores a file along with its type - regular file or directory.
+ *  This is needed because when we create _site directory, we need to create the subdirectories first.
+ *  However, java.io.File.isFile and java.io.File.isDirectory do not work on non-existent files.
+ *  I chose this over a map, because meh, I like custom data structures.
+ */
+data class FutureFile(val file: File, val type: String)
+
+const val SITE_DIRECTORY = "_site"
+const val CONTENT_DIRECTORY = "content"
 
 class Build : Command {
 
-    private val templates = mutableMapOf<String, String>()
-
     override fun run(args: Array<String>) {
+        println("Building site!")
+
         Clean().run(args)
-        println("Building site")
+        createSiteDirectory()
+        copyContentDirectory()
+    }
 
-        // build site dir
-        val dir = if (args.size >= 3) args[2] else ""
-        val sitePath = Paths.get(dir + "site")
+    private fun copyContentDirectory() {
+        val contentDirectory = File(CONTENT_DIRECTORY)
 
+        if (!contentDirectory.exists()) {
+            println("Content directory not found. Aborting build.")
+            return
+        }
+
+        val filesToCreate = copyContentDirectoryHelper(contentDirectory)
+
+        // create directories first
+        filesToCreate
+                .filter { it.type == "d" }
+                .forEach { Files.createDirectory(it.file.toPath()) }
+        filesToCreate
+                .filter { it.type == "f" }
+                .forEach { Files.createFile(it.file.toPath()) }
+    }
+
+    private fun copyContentDirectoryHelper(directory : File): List<FutureFile> {
+        val files = directory.listFiles().toList()
+        val newFiles = mutableListOf<FutureFile>()
+
+        for (file in files) {
+            val newFile = File(file.path.replace(CONTENT_DIRECTORY, SITE_DIRECTORY))
+
+            if (file.isDirectory) {
+                newFiles += copyContentDirectoryHelper(file)
+                newFiles += FutureFile(newFile, "d")
+                continue
+            }
+
+            newFiles += FutureFile(newFile, "f")
+        }
+
+        return newFiles
+    }
+
+    private fun createSiteDirectory() {
+        val sitePath = Path.of(SITE_DIRECTORY)
+        println("Okay, building site in $sitePath")
         Files.createDirectories(sitePath)
-        DirectoryCopier().copy(dir + "static", dir)
-        buildContent(dir)
-    }
-
-    private fun loadTemplates(dir: String) {
-        val templateDir = File("$dir/templates")
-
-        templateDir.walkTopDown().forEach { file ->
-            templates[file.name] = file.readText(Charsets.UTF_8)
-        }
-    }
-
-    private fun buildContent(dir: String) {
-        val pages = ContentLoader().load(dir)
-
-        pages.forEach { page ->
-            page.parameters["layout"]
-        }
     }
 }

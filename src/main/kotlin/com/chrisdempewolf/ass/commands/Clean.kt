@@ -1,19 +1,15 @@
 package com.chrisdempewolf.ass.commands
 
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 
-/**
- * Clean/Remove contents of site directory
- */
 class Clean : Command {
 
     override fun run(args: Array<String>) {
-        val dir = if (args.size >= 3) args[2] else ""
-        val sitePath = Paths.get(dir + "site/")
+        val sitePath = Path.of("_site")
 
         if (Files.exists(sitePath)) {
-            println("Cleaning site")
+            println("Cleaning site!")
             sitePath.toFile().deleteRecursively()
 
         }
